@@ -1,9 +1,8 @@
 package com.elennaro.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
+import java.util.StringJoiner;
 
 @Entity
 public class User {
@@ -13,7 +12,12 @@ public class User {
     private String username;
     private String password;
 
-    protected User(){}
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinColumns({@JoinColumn(name = "user_id"), @JoinColumn(name = "role_id")})
+    private Set<Role> roles;
+
+    protected User() {}
+
     public User(String username) {
         this.username = username;
     }
@@ -42,10 +46,23 @@ public class User {
         this.password = password;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
+
+        StringJoiner joiner = new StringJoiner(", ", "{ ", "}");
+        for (Role role : roles)
+            joiner.add(role.getRole());
+
         return String.format(
-                "User[id=%d, username='%s', password='%s']",
-                id, username, password);
+                "User[id=%d, username='%s', password='%s', roles='%s']",
+                id, username, password, joiner.toString());
     }
 }
