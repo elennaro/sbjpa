@@ -1,16 +1,30 @@
 package com.elennaro.entities;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import static java.util.Optional.ofNullable;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @NotEmpty
+    @Size(min = 2, max = 30)
     private String username;
+
+    @NotEmpty
+    @Size(min = 4, max = 30)
     private String password;
+
+    @Transient
+    private String confirmPassword;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumns({@JoinColumn(name = "user_id"), @JoinColumn(name = "role_id")})
@@ -19,6 +33,11 @@ public class User {
     protected User() {}
 
     public User(String username) {
+        this.username = username;
+    }
+
+    public User(String password, String username) {
+        this.password = password;
         this.username = username;
     }
 
@@ -46,6 +65,14 @@ public class User {
         this.password = password;
     }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -58,11 +85,16 @@ public class User {
     public String toString() {
 
         StringJoiner joiner = new StringJoiner(", ", "{ ", "}");
-        for (Role role : roles)
-            joiner.add(role.getRole());
+        if (roles != null)
+            for (Role role : roles)
+                joiner.add(role.getRole());
 
         return String.format(
                 "User[id=%d, username='%s', password='%s', roles='%s']",
-                id, username, password, joiner.toString());
+                id,
+                ofNullable(username).orElse(""),
+                ofNullable(password).orElse(""),
+                password,
+                joiner.toString());
     }
 }
