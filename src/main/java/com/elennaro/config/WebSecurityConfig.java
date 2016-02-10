@@ -24,15 +24,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/home").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .csrf().disable();
-//                .formLogin()
-//                .loginPage("/login")
-//                .permitAll()
-//        .and()
-//        .logout()
-//                .permitAll();
+                .csrf().disable()
+                .formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll();
     }
 
     @Override
