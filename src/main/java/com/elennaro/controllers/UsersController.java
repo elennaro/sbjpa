@@ -2,6 +2,7 @@ package com.elennaro.controllers;
 
 import com.elennaro.entities.User;
 import com.elennaro.repositories.UsersRepository;
+import com.elennaro.validators.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -30,6 +32,15 @@ public class UsersController {
     @Autowired
     UsersRepository usersRepository;
 
+    @Autowired
+    private UserValidator userValidator;
+
+    @InitBinder
+    protected void initBinder(final WebDataBinder binder) {
+        if (binder.getTarget() instanceof User)
+            binder.addValidators(userValidator);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody List<User> getUsers() {
         List<User> users = new ArrayList<>();
@@ -39,7 +50,7 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody User addUser(@Valid @ModelAttribute User user) {
-        return usersRepository.save(user);
+        return usersRepository.registerUser(user);
     }
 
 
