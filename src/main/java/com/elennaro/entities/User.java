@@ -3,11 +3,10 @@ package com.elennaro.entities;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 import java.util.StringJoiner;
-
-import static java.util.Optional.ofNullable;
 
 @Entity
 public class User {
@@ -16,11 +15,13 @@ public class User {
     private long id;
 
     @NotEmpty
+    @NotNull
     @Size(min = 2, max = 30)
     private String username;
 
     @NotEmpty
-    @Size(min = 4, max = 30)
+    @NotNull
+    @Size(min = 4, max = 100)
     private String password;
 
     @Transient
@@ -84,17 +85,14 @@ public class User {
     @Override
     public String toString() {
 
-        StringJoiner joiner = new StringJoiner(", ", "{ ", "}");
+        StringJoiner joiner = new StringJoiner(", ", "{ ", " }");
         if (roles != null)
             for (Role role : roles)
                 joiner.add(role.getRole());
 
-        return String.format(
+        String ret = String.format(
                 "User[id=%d, username='%s', password='%s', roles='%s']",
-                id,
-                ofNullable(username).orElse(""),
-                ofNullable(password).orElse(""),
-                password,
-                joiner.toString());
+                id, username, password, joiner.toString());
+        return ret;
     }
 }

@@ -39,8 +39,8 @@ public class Application {
             admin.setRoles(new HashSet<Role>() {{add(roleAdmin);}});
             user.setRoles(new HashSet<Role>() {{add(roleUser);}});
             // save a user
-            userRepo.save(admin);
-            userRepo.save(user);
+            userRepo.registerUser(admin);
+            userRepo.registerUser(user);
 
             // fetch all users
             log.info("Users found with findAll():");

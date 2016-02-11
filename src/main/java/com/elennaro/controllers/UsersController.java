@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_FORM_URLENCODED_VALUE;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = APPLICATION_JSON_VALUE)
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class UsersController {
 
@@ -31,7 +31,7 @@ public class UsersController {
     UsersRepository usersRepository;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<User> getUsers() {
+    public @ResponseBody List<User> getUsers() {
         List<User> users = new ArrayList<>();
         usersRepository.findAll().forEach(users::add);
         return users;
@@ -56,6 +56,9 @@ public class UsersController {
             attr.addFlashAttribute("user", user);
             return "redirect:/users/add";
         }
+
+        usersRepository.registerUser(user);
+
         return "redirect:/users";
     }
 
@@ -65,7 +68,7 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public User getUser(@PathVariable("id") Long id) {
+    public @ResponseBody User getUser(@PathVariable("id") Long id) {
         return usersRepository.findOne(id);
     }
 
