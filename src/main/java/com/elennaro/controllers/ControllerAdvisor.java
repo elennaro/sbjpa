@@ -2,37 +2,43 @@ package com.elennaro.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @ControllerAdvice
-@RequestMapping(consumes = {APPLICATION_JSON_VALUE, APPLICATION_FORM_URLENCODED_VALUE})
 public class ControllerAdvisor {
     private static final Logger logger = LoggerFactory.getLogger(ControllerAdvisor.class);
 
-    @ExceptionHandler(value = BindException.class)
-    public @ResponseBody ResponseEntity<Map> handleBindingExceptions(BindException ex) {
+    private static Map<?,?> generateFieldExceptionList(List<FieldError> errors) {
+        return errors.stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+    }
+
+    @ExceptionHandler(value = {BindException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public @ResponseBody ResponseEntity handleBindingExceptions(BindException ex) {
         logger.warn("Validation exception.", ex);
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        Map<String, String> errorsMap = new HashMap<>();
 
-        for (FieldError error : fieldErrors) {
-            errorsMap.put(error.getField(), error.getDefaultMessage());
-        }
+        return new ResponseEntity(generateFieldExceptionList(ex.getBindingResult().getFieldErrors()), BAD_REQUEST);
+    }
 
-        return new ResponseEntity(errorsMap, BAD_REQUEST);
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public @ResponseBody ResponseEntity handleException(MethodArgumentNotValidException ex) {
+        logger.warn("Validation exception.", ex);
+
+        return new ResponseEntity(generateFieldExceptionList(ex.getBindingResult().getFieldErrors()), BAD_REQUEST);
     }
 }

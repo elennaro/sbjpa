@@ -49,7 +49,7 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody User addUser(@Valid @ModelAttribute User user) {
+    public @ResponseBody User addUser(@Valid @RequestBody User user) {
         return usersRepository.registerUser(user);
     }
 
