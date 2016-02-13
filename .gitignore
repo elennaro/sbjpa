@@ -96,6 +96,8 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 ### NetBeans template
+/node_modules
+/src/main/resources/static/resources
 nbproject/private/
 nbbuild/
 dist/
