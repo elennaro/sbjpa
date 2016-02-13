@@ -64,6 +64,9 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    //Webjars
+    compile("org.webjars:bootstrap:3.3.6")
+    compile("org.webjars:angular-ui-bootstrap:1.0.3")
 }
 
 //make sure node and gulp are installed before calling the build task in gulpfile.js

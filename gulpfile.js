@@ -12,7 +12,7 @@ var OPTS = {
         less: 'src/main/frontend/less/*',
         templates: 'src/main/frontend/**/*.html',
         js: 'src/main/frontend/**/*.js',
-        static_out: 'src/main/resources/static/resources/'
+        static_out: 'src/main/webapp/resources/'
     },
     libs: []
 };
